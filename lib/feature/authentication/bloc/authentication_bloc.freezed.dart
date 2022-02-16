@@ -357,8 +357,7 @@ abstract class _LogOutAuthenticationEvent extends AuthenticationEvent {
 class _$AuthenticationStateTearOff {
   const _$AuthenticationStateTearOff();
 
-  _AuthenticatedAuthenticationState authenticated(
-      {required AuthenticatedUser user}) {
+  _AuthenticatedAuthenticationState authenticated({required UserEntity user}) {
     return _AuthenticatedAuthenticationState(
       user: user,
     );
@@ -371,8 +370,27 @@ class _$AuthenticationStateTearOff {
     );
   }
 
-  _UnAuthenticatedAuthenticationState unAuthenticated() {
-    return const _UnAuthenticatedAuthenticationState();
+  _NotAuthenticatedAuthenticationState notAuthenticated(
+      {UserEntity user = const UserEntity.notAuthenticated()}) {
+    return _NotAuthenticatedAuthenticationState(
+      user: user,
+    );
+  }
+
+  _ErrorAuthenticationState error(
+      {UserEntity user = const UserEntity.notAuthenticated(),
+      String message = 'Ошибка!'}) {
+    return _ErrorAuthenticationState(
+      user: user,
+      message: message,
+    );
+  }
+
+  _SuccessAuthenticationState success(
+      {UserEntity user = const UserEntity.notAuthenticated()}) {
+    return _SuccessAuthenticationState(
+      user: user,
+    );
   }
 }
 
@@ -381,25 +399,33 @@ const $AuthenticationState = _$AuthenticationStateTearOff();
 
 /// @nodoc
 mixin _$AuthenticationState {
+  UserEntity get user => throw _privateConstructorUsedError;
+
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthenticatedUser user) authenticated,
+    required TResult Function(UserEntity user) authenticated,
     required TResult Function(UserEntity user) inProgress,
-    required TResult Function() unAuthenticated,
+    required TResult Function(UserEntity user) notAuthenticated,
+    required TResult Function(UserEntity user, String message) error,
+    required TResult Function(UserEntity user) success,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -408,26 +434,36 @@ mixin _$AuthenticationState {
     required TResult Function(_AuthenticatedAuthenticationState value)
         authenticated,
     required TResult Function(_InProgressAuthenticationState value) inProgress,
-    required TResult Function(_UnAuthenticatedAuthenticationState value)
-        unAuthenticated,
+    required TResult Function(_NotAuthenticatedAuthenticationState value)
+        notAuthenticated,
+    required TResult Function(_ErrorAuthenticationState value) error,
+    required TResult Function(_SuccessAuthenticationState value) success,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
     required TResult orElse(),
   }) =>
+      throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AuthenticationStateCopyWith<AuthenticationState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -436,6 +472,7 @@ abstract class $AuthenticationStateCopyWith<$Res> {
   factory $AuthenticationStateCopyWith(
           AuthenticationState value, $Res Function(AuthenticationState) then) =
       _$AuthenticationStateCopyWithImpl<$Res>;
+  $Res call({UserEntity user});
 }
 
 /// @nodoc
@@ -446,15 +483,29 @@ class _$AuthenticationStateCopyWithImpl<$Res>
   final AuthenticationState _value;
   // ignore: unused_field
   final $Res Function(AuthenticationState) _then;
+
+  @override
+  $Res call({
+    Object? user = freezed,
+  }) {
+    return _then(_value.copyWith(
+      user: user == freezed
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserEntity,
+    ));
+  }
 }
 
 /// @nodoc
-abstract class _$AuthenticatedAuthenticationStateCopyWith<$Res> {
+abstract class _$AuthenticatedAuthenticationStateCopyWith<$Res>
+    implements $AuthenticationStateCopyWith<$Res> {
   factory _$AuthenticatedAuthenticationStateCopyWith(
           _AuthenticatedAuthenticationState value,
           $Res Function(_AuthenticatedAuthenticationState) then) =
       __$AuthenticatedAuthenticationStateCopyWithImpl<$Res>;
-  $Res call({AuthenticatedUser user});
+  @override
+  $Res call({UserEntity user});
 }
 
 /// @nodoc
@@ -478,7 +529,7 @@ class __$AuthenticatedAuthenticationStateCopyWithImpl<$Res>
       user: user == freezed
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
-              as AuthenticatedUser,
+              as UserEntity,
     ));
   }
 }
@@ -490,7 +541,7 @@ class _$_AuthenticatedAuthenticationState
   const _$_AuthenticatedAuthenticationState({required this.user}) : super._();
 
   @override
-  final AuthenticatedUser user;
+  final UserEntity user;
 
   @override
   String toString() {
@@ -518,9 +569,11 @@ class _$_AuthenticatedAuthenticationState
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthenticatedUser user) authenticated,
+    required TResult Function(UserEntity user) authenticated,
     required TResult Function(UserEntity user) inProgress,
-    required TResult Function() unAuthenticated,
+    required TResult Function(UserEntity user) notAuthenticated,
+    required TResult Function(UserEntity user, String message) error,
+    required TResult Function(UserEntity user) success,
   }) {
     return authenticated(user);
   }
@@ -528,9 +581,11 @@ class _$_AuthenticatedAuthenticationState
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
   }) {
     return authenticated?.call(user);
   }
@@ -538,9 +593,11 @@ class _$_AuthenticatedAuthenticationState
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
@@ -555,8 +612,10 @@ class _$_AuthenticatedAuthenticationState
     required TResult Function(_AuthenticatedAuthenticationState value)
         authenticated,
     required TResult Function(_InProgressAuthenticationState value) inProgress,
-    required TResult Function(_UnAuthenticatedAuthenticationState value)
-        unAuthenticated,
+    required TResult Function(_NotAuthenticatedAuthenticationState value)
+        notAuthenticated,
+    required TResult Function(_ErrorAuthenticationState value) error,
+    required TResult Function(_SuccessAuthenticationState value) success,
   }) {
     return authenticated(this);
   }
@@ -566,8 +625,10 @@ class _$_AuthenticatedAuthenticationState
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
   }) {
     return authenticated?.call(this);
   }
@@ -577,8 +638,10 @@ class _$_AuthenticatedAuthenticationState
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
@@ -589,22 +652,26 @@ class _$_AuthenticatedAuthenticationState
 }
 
 abstract class _AuthenticatedAuthenticationState extends AuthenticationState {
-  const factory _AuthenticatedAuthenticationState(
-      {required AuthenticatedUser user}) = _$_AuthenticatedAuthenticationState;
+  const factory _AuthenticatedAuthenticationState({required UserEntity user}) =
+      _$_AuthenticatedAuthenticationState;
   const _AuthenticatedAuthenticationState._() : super._();
 
-  AuthenticatedUser get user;
+  @override
+  UserEntity get user;
+  @override
   @JsonKey(ignore: true)
   _$AuthenticatedAuthenticationStateCopyWith<_AuthenticatedAuthenticationState>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$InProgressAuthenticationStateCopyWith<$Res> {
+abstract class _$InProgressAuthenticationStateCopyWith<$Res>
+    implements $AuthenticationStateCopyWith<$Res> {
   factory _$InProgressAuthenticationStateCopyWith(
           _InProgressAuthenticationState value,
           $Res Function(_InProgressAuthenticationState) then) =
       __$InProgressAuthenticationStateCopyWithImpl<$Res>;
+  @override
   $Res call({UserEntity user});
 }
 
@@ -671,9 +738,11 @@ class _$_InProgressAuthenticationState extends _InProgressAuthenticationState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthenticatedUser user) authenticated,
+    required TResult Function(UserEntity user) authenticated,
     required TResult Function(UserEntity user) inProgress,
-    required TResult Function() unAuthenticated,
+    required TResult Function(UserEntity user) notAuthenticated,
+    required TResult Function(UserEntity user, String message) error,
+    required TResult Function(UserEntity user) success,
   }) {
     return inProgress(user);
   }
@@ -681,9 +750,11 @@ class _$_InProgressAuthenticationState extends _InProgressAuthenticationState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
   }) {
     return inProgress?.call(user);
   }
@@ -691,9 +762,11 @@ class _$_InProgressAuthenticationState extends _InProgressAuthenticationState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
     required TResult orElse(),
   }) {
     if (inProgress != null) {
@@ -708,8 +781,10 @@ class _$_InProgressAuthenticationState extends _InProgressAuthenticationState {
     required TResult Function(_AuthenticatedAuthenticationState value)
         authenticated,
     required TResult Function(_InProgressAuthenticationState value) inProgress,
-    required TResult Function(_UnAuthenticatedAuthenticationState value)
-        unAuthenticated,
+    required TResult Function(_NotAuthenticatedAuthenticationState value)
+        notAuthenticated,
+    required TResult Function(_ErrorAuthenticationState value) error,
+    required TResult Function(_SuccessAuthenticationState value) success,
   }) {
     return inProgress(this);
   }
@@ -719,8 +794,10 @@ class _$_InProgressAuthenticationState extends _InProgressAuthenticationState {
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
   }) {
     return inProgress?.call(this);
   }
@@ -730,8 +807,10 @@ class _$_InProgressAuthenticationState extends _InProgressAuthenticationState {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
     required TResult orElse(),
   }) {
     if (inProgress != null) {
@@ -746,85 +825,123 @@ abstract class _InProgressAuthenticationState extends AuthenticationState {
       _$_InProgressAuthenticationState;
   const _InProgressAuthenticationState._() : super._();
 
+  @override
   UserEntity get user;
+  @override
   @JsonKey(ignore: true)
   _$InProgressAuthenticationStateCopyWith<_InProgressAuthenticationState>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$UnAuthenticatedAuthenticationStateCopyWith<$Res> {
-  factory _$UnAuthenticatedAuthenticationStateCopyWith(
-          _UnAuthenticatedAuthenticationState value,
-          $Res Function(_UnAuthenticatedAuthenticationState) then) =
-      __$UnAuthenticatedAuthenticationStateCopyWithImpl<$Res>;
+abstract class _$NotAuthenticatedAuthenticationStateCopyWith<$Res>
+    implements $AuthenticationStateCopyWith<$Res> {
+  factory _$NotAuthenticatedAuthenticationStateCopyWith(
+          _NotAuthenticatedAuthenticationState value,
+          $Res Function(_NotAuthenticatedAuthenticationState) then) =
+      __$NotAuthenticatedAuthenticationStateCopyWithImpl<$Res>;
+  @override
+  $Res call({UserEntity user});
 }
 
 /// @nodoc
-class __$UnAuthenticatedAuthenticationStateCopyWithImpl<$Res>
+class __$NotAuthenticatedAuthenticationStateCopyWithImpl<$Res>
     extends _$AuthenticationStateCopyWithImpl<$Res>
-    implements _$UnAuthenticatedAuthenticationStateCopyWith<$Res> {
-  __$UnAuthenticatedAuthenticationStateCopyWithImpl(
-      _UnAuthenticatedAuthenticationState _value,
-      $Res Function(_UnAuthenticatedAuthenticationState) _then)
-      : super(_value, (v) => _then(v as _UnAuthenticatedAuthenticationState));
+    implements _$NotAuthenticatedAuthenticationStateCopyWith<$Res> {
+  __$NotAuthenticatedAuthenticationStateCopyWithImpl(
+      _NotAuthenticatedAuthenticationState _value,
+      $Res Function(_NotAuthenticatedAuthenticationState) _then)
+      : super(_value, (v) => _then(v as _NotAuthenticatedAuthenticationState));
 
   @override
-  _UnAuthenticatedAuthenticationState get _value =>
-      super._value as _UnAuthenticatedAuthenticationState;
+  _NotAuthenticatedAuthenticationState get _value =>
+      super._value as _NotAuthenticatedAuthenticationState;
+
+  @override
+  $Res call({
+    Object? user = freezed,
+  }) {
+    return _then(_NotAuthenticatedAuthenticationState(
+      user: user == freezed
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserEntity,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$_UnAuthenticatedAuthenticationState
-    extends _UnAuthenticatedAuthenticationState {
-  const _$_UnAuthenticatedAuthenticationState() : super._();
+class _$_NotAuthenticatedAuthenticationState
+    extends _NotAuthenticatedAuthenticationState {
+  const _$_NotAuthenticatedAuthenticationState(
+      {this.user = const UserEntity.notAuthenticated()})
+      : super._();
+
+  @JsonKey()
+  @override
+  final UserEntity user;
 
   @override
   String toString() {
-    return 'AuthenticationState.unAuthenticated()';
+    return 'AuthenticationState.notAuthenticated(user: $user)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _UnAuthenticatedAuthenticationState);
+            other is _NotAuthenticatedAuthenticationState &&
+            const DeepCollectionEquality().equals(other.user, user));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(user));
+
+  @JsonKey(ignore: true)
+  @override
+  _$NotAuthenticatedAuthenticationStateCopyWith<
+          _NotAuthenticatedAuthenticationState>
+      get copyWith => __$NotAuthenticatedAuthenticationStateCopyWithImpl<
+          _NotAuthenticatedAuthenticationState>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthenticatedUser user) authenticated,
+    required TResult Function(UserEntity user) authenticated,
     required TResult Function(UserEntity user) inProgress,
-    required TResult Function() unAuthenticated,
+    required TResult Function(UserEntity user) notAuthenticated,
+    required TResult Function(UserEntity user, String message) error,
+    required TResult Function(UserEntity user) success,
   }) {
-    return unAuthenticated();
+    return notAuthenticated(user);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
   }) {
-    return unAuthenticated?.call();
+    return notAuthenticated?.call(user);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthenticatedUser user)? authenticated,
+    TResult Function(UserEntity user)? authenticated,
     TResult Function(UserEntity user)? inProgress,
-    TResult Function()? unAuthenticated,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
     required TResult orElse(),
   }) {
-    if (unAuthenticated != null) {
-      return unAuthenticated();
+    if (notAuthenticated != null) {
+      return notAuthenticated(user);
     }
     return orElse();
   }
@@ -835,10 +952,12 @@ class _$_UnAuthenticatedAuthenticationState
     required TResult Function(_AuthenticatedAuthenticationState value)
         authenticated,
     required TResult Function(_InProgressAuthenticationState value) inProgress,
-    required TResult Function(_UnAuthenticatedAuthenticationState value)
-        unAuthenticated,
+    required TResult Function(_NotAuthenticatedAuthenticationState value)
+        notAuthenticated,
+    required TResult Function(_ErrorAuthenticationState value) error,
+    required TResult Function(_SuccessAuthenticationState value) success,
   }) {
-    return unAuthenticated(this);
+    return notAuthenticated(this);
   }
 
   @override
@@ -846,10 +965,12 @@ class _$_UnAuthenticatedAuthenticationState
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
   }) {
-    return unAuthenticated?.call(this);
+    return notAuthenticated?.call(this);
   }
 
   @override
@@ -857,19 +978,378 @@ class _$_UnAuthenticatedAuthenticationState
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
     TResult Function(_InProgressAuthenticationState value)? inProgress,
-    TResult Function(_UnAuthenticatedAuthenticationState value)?
-        unAuthenticated,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
     required TResult orElse(),
   }) {
-    if (unAuthenticated != null) {
-      return unAuthenticated(this);
+    if (notAuthenticated != null) {
+      return notAuthenticated(this);
     }
     return orElse();
   }
 }
 
-abstract class _UnAuthenticatedAuthenticationState extends AuthenticationState {
-  const factory _UnAuthenticatedAuthenticationState() =
-      _$_UnAuthenticatedAuthenticationState;
-  const _UnAuthenticatedAuthenticationState._() : super._();
+abstract class _NotAuthenticatedAuthenticationState
+    extends AuthenticationState {
+  const factory _NotAuthenticatedAuthenticationState({UserEntity user}) =
+      _$_NotAuthenticatedAuthenticationState;
+  const _NotAuthenticatedAuthenticationState._() : super._();
+
+  @override
+  UserEntity get user;
+  @override
+  @JsonKey(ignore: true)
+  _$NotAuthenticatedAuthenticationStateCopyWith<
+          _NotAuthenticatedAuthenticationState>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$ErrorAuthenticationStateCopyWith<$Res>
+    implements $AuthenticationStateCopyWith<$Res> {
+  factory _$ErrorAuthenticationStateCopyWith(_ErrorAuthenticationState value,
+          $Res Function(_ErrorAuthenticationState) then) =
+      __$ErrorAuthenticationStateCopyWithImpl<$Res>;
+  @override
+  $Res call({UserEntity user, String message});
+}
+
+/// @nodoc
+class __$ErrorAuthenticationStateCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res>
+    implements _$ErrorAuthenticationStateCopyWith<$Res> {
+  __$ErrorAuthenticationStateCopyWithImpl(_ErrorAuthenticationState _value,
+      $Res Function(_ErrorAuthenticationState) _then)
+      : super(_value, (v) => _then(v as _ErrorAuthenticationState));
+
+  @override
+  _ErrorAuthenticationState get _value =>
+      super._value as _ErrorAuthenticationState;
+
+  @override
+  $Res call({
+    Object? user = freezed,
+    Object? message = freezed,
+  }) {
+    return _then(_ErrorAuthenticationState(
+      user: user == freezed
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserEntity,
+      message: message == freezed
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_ErrorAuthenticationState extends _ErrorAuthenticationState {
+  const _$_ErrorAuthenticationState(
+      {this.user = const UserEntity.notAuthenticated(),
+      this.message = 'Ошибка!'})
+      : super._();
+
+  @JsonKey()
+  @override
+  final UserEntity user;
+  @JsonKey()
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'AuthenticationState.error(user: $user, message: $message)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ErrorAuthenticationState &&
+            const DeepCollectionEquality().equals(other.user, user) &&
+            const DeepCollectionEquality().equals(other.message, message));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(user),
+      const DeepCollectionEquality().hash(message));
+
+  @JsonKey(ignore: true)
+  @override
+  _$ErrorAuthenticationStateCopyWith<_ErrorAuthenticationState> get copyWith =>
+      __$ErrorAuthenticationStateCopyWithImpl<_ErrorAuthenticationState>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(UserEntity user) authenticated,
+    required TResult Function(UserEntity user) inProgress,
+    required TResult Function(UserEntity user) notAuthenticated,
+    required TResult Function(UserEntity user, String message) error,
+    required TResult Function(UserEntity user) success,
+  }) {
+    return error(user, message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(UserEntity user)? authenticated,
+    TResult Function(UserEntity user)? inProgress,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
+  }) {
+    return error?.call(user, message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(UserEntity user)? authenticated,
+    TResult Function(UserEntity user)? inProgress,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(user, message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_AuthenticatedAuthenticationState value)
+        authenticated,
+    required TResult Function(_InProgressAuthenticationState value) inProgress,
+    required TResult Function(_NotAuthenticatedAuthenticationState value)
+        notAuthenticated,
+    required TResult Function(_ErrorAuthenticationState value) error,
+    required TResult Function(_SuccessAuthenticationState value) success,
+  }) {
+    return error(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
+    TResult Function(_InProgressAuthenticationState value)? inProgress,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
+  }) {
+    return error?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
+    TResult Function(_InProgressAuthenticationState value)? inProgress,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
+    required TResult orElse(),
+  }) {
+    if (error != null) {
+      return error(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ErrorAuthenticationState extends AuthenticationState {
+  const factory _ErrorAuthenticationState({UserEntity user, String message}) =
+      _$_ErrorAuthenticationState;
+  const _ErrorAuthenticationState._() : super._();
+
+  @override
+  UserEntity get user;
+  String get message;
+  @override
+  @JsonKey(ignore: true)
+  _$ErrorAuthenticationStateCopyWith<_ErrorAuthenticationState> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$SuccessAuthenticationStateCopyWith<$Res>
+    implements $AuthenticationStateCopyWith<$Res> {
+  factory _$SuccessAuthenticationStateCopyWith(
+          _SuccessAuthenticationState value,
+          $Res Function(_SuccessAuthenticationState) then) =
+      __$SuccessAuthenticationStateCopyWithImpl<$Res>;
+  @override
+  $Res call({UserEntity user});
+}
+
+/// @nodoc
+class __$SuccessAuthenticationStateCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res>
+    implements _$SuccessAuthenticationStateCopyWith<$Res> {
+  __$SuccessAuthenticationStateCopyWithImpl(_SuccessAuthenticationState _value,
+      $Res Function(_SuccessAuthenticationState) _then)
+      : super(_value, (v) => _then(v as _SuccessAuthenticationState));
+
+  @override
+  _SuccessAuthenticationState get _value =>
+      super._value as _SuccessAuthenticationState;
+
+  @override
+  $Res call({
+    Object? user = freezed,
+  }) {
+    return _then(_SuccessAuthenticationState(
+      user: user == freezed
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserEntity,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_SuccessAuthenticationState extends _SuccessAuthenticationState {
+  const _$_SuccessAuthenticationState(
+      {this.user = const UserEntity.notAuthenticated()})
+      : super._();
+
+  @JsonKey()
+  @override
+  final UserEntity user;
+
+  @override
+  String toString() {
+    return 'AuthenticationState.success(user: $user)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _SuccessAuthenticationState &&
+            const DeepCollectionEquality().equals(other.user, user));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(user));
+
+  @JsonKey(ignore: true)
+  @override
+  _$SuccessAuthenticationStateCopyWith<_SuccessAuthenticationState>
+      get copyWith => __$SuccessAuthenticationStateCopyWithImpl<
+          _SuccessAuthenticationState>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(UserEntity user) authenticated,
+    required TResult Function(UserEntity user) inProgress,
+    required TResult Function(UserEntity user) notAuthenticated,
+    required TResult Function(UserEntity user, String message) error,
+    required TResult Function(UserEntity user) success,
+  }) {
+    return success(user);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(UserEntity user)? authenticated,
+    TResult Function(UserEntity user)? inProgress,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
+  }) {
+    return success?.call(user);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(UserEntity user)? authenticated,
+    TResult Function(UserEntity user)? inProgress,
+    TResult Function(UserEntity user)? notAuthenticated,
+    TResult Function(UserEntity user, String message)? error,
+    TResult Function(UserEntity user)? success,
+    required TResult orElse(),
+  }) {
+    if (success != null) {
+      return success(user);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_AuthenticatedAuthenticationState value)
+        authenticated,
+    required TResult Function(_InProgressAuthenticationState value) inProgress,
+    required TResult Function(_NotAuthenticatedAuthenticationState value)
+        notAuthenticated,
+    required TResult Function(_ErrorAuthenticationState value) error,
+    required TResult Function(_SuccessAuthenticationState value) success,
+  }) {
+    return success(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
+    TResult Function(_InProgressAuthenticationState value)? inProgress,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
+  }) {
+    return success?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_AuthenticatedAuthenticationState value)? authenticated,
+    TResult Function(_InProgressAuthenticationState value)? inProgress,
+    TResult Function(_NotAuthenticatedAuthenticationState value)?
+        notAuthenticated,
+    TResult Function(_ErrorAuthenticationState value)? error,
+    TResult Function(_SuccessAuthenticationState value)? success,
+    required TResult orElse(),
+  }) {
+    if (success != null) {
+      return success(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SuccessAuthenticationState extends AuthenticationState {
+  const factory _SuccessAuthenticationState({UserEntity user}) =
+      _$_SuccessAuthenticationState;
+  const _SuccessAuthenticationState._() : super._();
+
+  @override
+  UserEntity get user;
+  @override
+  @JsonKey(ignore: true)
+  _$SuccessAuthenticationStateCopyWith<_SuccessAuthenticationState>
+      get copyWith => throw _privateConstructorUsedError;
 }

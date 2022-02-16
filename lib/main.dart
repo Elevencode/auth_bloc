@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart' as bloc_concurrency;
 
 void main() => runZonedGuarded<void>(
+  //TODO: разобраться в зонах
   () async {
     BlocOverrides.runZoned(
       MyApp(),
