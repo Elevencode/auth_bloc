@@ -1,3 +1,4 @@
+import 'package:auth_bloc/feature/authentication/model/user_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
